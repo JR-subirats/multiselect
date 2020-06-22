@@ -4,10 +4,10 @@
 		(typeof($) == 'undefined' && item.tagName != 'SELECT')) {
 		throw "Multiselect: passed object must be a select";
 	}
-	
+
 	if ((typeof($) != 'undefined' && !$(item).attr('multiple')) ||
 		(typeof($) == 'undefined' && !item.hasAttribute('multiple'))) {
-		throw "Multiselect: passed object should contain 'multiple' attribute";	
+		throw "Multiselect: passed object should contain 'multiple' attribute";
 	}
 
 	this._item = item;
@@ -27,12 +27,12 @@ Multiselect.prototype = {
 		m_helper.removeNode(this._getIdentifier());
 
 		var wrapper = this._createWrapper();
-		
+
 		m_helper.insertAfter(wrapper, this._item);
 
 		wrapper.appendChild(this._createInputField());
 		wrapper.appendChild(this._createItemList());
-		
+
 		m_helper.hide(this._item);
 	},
 
@@ -72,7 +72,7 @@ Multiselect.prototype = {
 
 		label.style.visibility = 'hidden';
 		label.innerHTML = 0;
-		
+
 		result.appendChild(input);
 		result.appendChild(label);
 		result.appendChild(dropDownArrow);
@@ -117,13 +117,13 @@ Multiselect.prototype = {
 		textBox = m_helper.create({ tag : 'span', class : 'multiselect-text'}),
 		result = m_helper.create({ tag: wrapper }),
 		label = m_helper.label();
-		
+
 		textBox.className = 'multiselect-text';
 		textBox.innerHTML = text;
 
 		label.appendChild(checkBox);
 		label.appendChild(textBox);
-		
+
 		result.appendChild(label);
 		return result;
 	},
@@ -139,7 +139,7 @@ Multiselect.prototype = {
 				self.select(e.id);
 			});
 		}
-		
+
 		this._hideList(this);
 	},
 
@@ -150,7 +150,7 @@ Multiselect.prototype = {
 	destroy() {
 		m_helper.removeNode(this._getIdentifier());
 		m_helper.show(this._item);
-		
+
 		var index = window.multiselects._items.indexOf(this._item);
 		if (index > -1) {
 			window.multiselects._items.splice(index, 1);
@@ -161,7 +161,7 @@ Multiselect.prototype = {
 	select: function (val) {
 		this._toggle(val, true);
 	},
-	
+
 	deselect: function(val) {
 		this._toggle(val, false);
 	},
@@ -180,7 +180,7 @@ Multiselect.prototype = {
 
 		this._isEnabled = isEnabled;
 	},
-	
+
 	_toggle: function(val, setCheck) {
 		var self = this;
 		if (val) {
@@ -196,25 +196,36 @@ Multiselect.prototype = {
 						}
 					}
 				});
-				
+
 			self._updateText(self);
-		}		
+		}
 	},
 
 	selectAll: function (val) {
 		var selectAllChkBox = document.querySelector('#' + this._getIdentifier() + ' .multiselect-checkbox');
 		m_helper.check(selectAllChkBox);
 		this._onCheckBoxChange(selectAllChkBox, this);
-		
+
 		this._updateText(this);
 	},
-	
+
 	deselectAll : function() {
 		var selectAllChkBox = document.querySelector('#' + this._getIdentifier() + ' .multiselect-checkbox');
 		m_helper.uncheck(selectAllChkBox);
 		this._onCheckBoxChange(selectAllChkBox, this);
-		
+
 		this._updateText(this);
+	},
+
+	getSelectedValues: function() {
+		const values = [];
+		var allChkBox = document.querySelectorAll('#' + this._getIdentifier() + ' .multiselect-checkbox');
+		for (let i = 1; i < allChkBox.length; ++i) {
+			if (allChkBox[i].checked) {
+				values.push(allChkBox[i].getAttribute('data-val'));
+			}
+		}
+		return values;
 	},
 
 	_checkboxClickEvents: {},
@@ -251,14 +262,14 @@ Multiselect.prototype = {
 			event = event || window.event;
 			var target = event.target || event.srcElement;
 			if (m_helper.parent(target, self._getIdentifier())) {
-				event.stopPropagation();				
+				event.stopPropagation();
 			}
 		});
 
 		document.getElementById(self._getItemListIdentifier()).addEventListener('mouseover', function () {
 			self._showList(self);
 		});
-		
+
 		m_helper.each(document.getElementById(self._getIdentifier()).querySelectorAll('.multiselect-checkbox'),
 			function(e) {
 				e.addEventListener('change', function(event) {
@@ -276,11 +287,11 @@ Multiselect.prototype = {
 				m_helper.hide(document.querySelector('#' + self._getItemListIdentifier() + ' > span'));
 				m_helper.hide(document.querySelector('#' + self._getItemListIdentifier() + ' > hr'));
 
-				var array = Array.prototype.filter.call(document.querySelectorAll('#' + self._getItemListIdentifier() + ' li span'), 
+				var array = Array.prototype.filter.call(document.querySelectorAll('#' + self._getItemListIdentifier() + ' li span'),
 				function (obj) {
 					return obj.innerHTML.toLowerCase().indexOf(text) > -1;
 				});
-				
+
 				m_helper.hideAll(document.querySelectorAll('#' + self._getItemListIdentifier() + ' li'));
 
 				m_helper.each(array, function(e) {
@@ -288,7 +299,7 @@ Multiselect.prototype = {
 				});
 			}
 		}
-		
+
 		document.getElementById(self._getInputFieldIdentifier()).addEventListener('propertychange', onInput);
 		document.getElementById(self._getInputFieldIdentifier()).addEventListener('input', onInput);
 	},
@@ -312,7 +323,7 @@ Multiselect.prototype = {
 
 		self._forceUpdate();
 	},
-	
+
 	_performSelectItem : function(checkbox, self) {
 		var item = JSON.parse(checkbox.dataset.multiselectElement);
 		if (checkbox.checked) {
@@ -329,7 +340,7 @@ Multiselect.prototype = {
 
 		return { id: item.id, checked: false };
 	},
-	
+
 	_performSelectAll : function(checkbox, self) {
 		var items = self._getItems();
 
@@ -351,7 +362,7 @@ Multiselect.prototype = {
 		});
 		return false;
 	},
-	
+
 	_updateSelectAll :function(self) {
 		var allChkBox = document.getElementById(self._getItemListIdentifier()).querySelector('input[type=checkbox]');
 		if (self._itemCounter == self._getItems().length) {
@@ -361,10 +372,10 @@ Multiselect.prototype = {
 			allChkBox.checked = false;
 		}
 	},
-	
+
 	_hideList: function (context, event) {
 		m_helper.setUnactive(document.getElementById(context._getItemListIdentifier()));
-		
+
 		m_helper.show(document.getElementById(context._getItemListIdentifier()).querySelector('span'));
 		m_helper.show(document.getElementById(context._getItemListIdentifier()).querySelector('hr'));
 		m_helper.showAll(document.getElementById(context._getItemListIdentifier()).querySelectorAll('li'));
@@ -374,7 +385,7 @@ Multiselect.prototype = {
 		if (event)
 			event.stopPropagation();
 	},
-	
+
 	_updateText : function(context) {
 		var activeItems = document.getElementById(context._getItemListIdentifier()).querySelectorAll('ul .active');
 		if (activeItems.length > 0) {
@@ -389,11 +400,11 @@ Multiselect.prototype = {
 				val = val.substr(0, 17) + '...';
 			}
 		}
-		
+
 		if (activeItems.length == document.getElementById(context._getItemListIdentifier()).querySelectorAll('ul li').length) {
 			val = 'All selected';
 		}
-		document.getElementById(context._getInputFieldIdentifier()).value = val ? val : '';		
+		document.getElementById(context._getInputFieldIdentifier()).value = val ? val : '';
 	},
 
 	_showList: function (context) {
@@ -408,9 +419,9 @@ Multiselect.prototype = {
 		if (this._itemCounter != 0) {
 			badge.innerHTML = this._itemCounter;
 			badge.style.visibility = 'visible';
-			
+
 			var ddArrow = badge.nextElementSibling;
-			
+
 			if (this._itemCounter < 10) {
 				badge.style.left = '-45px';
 				ddArrow.style.marginLeft = '-42px';
@@ -444,7 +455,7 @@ Multiselect.prototype = {
 		if (this._items == undefined) {
 			var result = [];
 			var opts = this._item.options;
-			
+
 			for	(var i = 0; i < opts.length; i++) {
 				var insertItem = {
 					id: opts[i].value,

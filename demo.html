@@ -4,27 +4,75 @@
 	<title>Pure js multiselect demo</title>
 
 	<link href="styles/multiselect.css" rel="stylesheet"/>
-	<script src="multiselect.min.js"></script>
+	<!-- <script src="multiselect.min.js"></script> -->
+	<script src="scripts/helper.js"></script>
+	<script src="scripts/multiselect.core.js"></script>
+	<script src="scripts/multiselect.js"></script>
 	<style>
+		.demo_table td {
+			width: 300px
+		}
 		/* example of setting the width for multiselect */
-		#testSelect1_multiSelect {
+		#testSelect1_multiSelect,
+		#testSelect2_multiSelect,
+		#testSelect3_multiSelect {
 			width: 200px;
 		}
 	</style>
 </head>
 <body>
-<select id='testSelect1' multiple>
-	<option value='1'>Item 1</option>
-	<option value='2' selected>Item 2</option>
-	<option value='3' selected>Item 3</option>
-	<option value='4'>Item 4</option>
-	<option value='5'>Item 5</option>
-</select>
 
-<div>
-	<button onclick="enable()">Enable</button>
-	<button onclick="disable()">Disable</button>
-</div>
+	<table border="0" class="demo_table">
+		<tr>
+			<td>
+				<select id='testSelect1' multiple>
+					<option value='1' selected>Item 1</option>
+					<option value='2' selected>Item 2</option>
+					<option value='3'>Item 3</option>
+					<option value='4'>Item 4</option>
+					<option value='5'>Item 5</option>
+					<option value='6'>Item 6</option>
+				</select>
+			</td>
+			<td>
+				<select id='testSelect2' multiple>
+					<option value='1'>Item 1</option>
+					<option value='2'>Item 2</option>
+					<option value='3' selected>Item 3</option>
+					<option value='4' selected>Item 4</option>
+					<option value='5'>Item 5</option>
+					<option value='6'>Item 6</option>
+				</select>
+			</td>
+			<td>
+				<select id='testSelect3' multiple>
+					<option value='1'>Item 1</option>
+					<option value='2'>Item 2</option>
+					<option value='3'>Item 3</option>
+					<option value='4'>Item 4</option>
+					<option value='5' selected>Item 5</option>
+					<option value='6' selected>Item 6</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<button onclick="enable(1)">Enable</button>
+				<button onclick="disable(1)">Disable</button>
+				<button onclick="getSelected(1)">Get Selected</button>
+			</td>
+			<td>
+				<button onclick="enable(2)">Enable</button>
+				<button onclick="disable(2)">Disable</button>
+				<button onclick="getSelected(2)">Get Selected</button>
+			</td>
+			<td>
+				<button onclick="enable(3)">Enable</button>
+				<button onclick="disable(3)">Disable</button>
+				<button onclick="getSelected(3)">Get Selected</button>
+			</td>
+		</tr>
+	</table>
 
 <script>
 	document.multiselect('#testSelect1')
@@ -35,12 +83,19 @@
 			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
 
-	function enable() {
-		document.multiselect('#testSelect1').setIsEnabled(true);
+	document.multiselect('#testSelect2');
+	document.multiselect('#testSelect3');
+
+	function enable(num) {
+		document.multiselect('#testSelect'+num).setIsEnabled(true);
 	}
 
-	function disable() {
-		document.multiselect('#testSelect1').setIsEnabled(false);
+	function disable(num) {
+		document.multiselect('#testSelect'+num).setIsEnabled(false);
+	}
+
+	function getSelected(num) {
+		console.log('Selected values --> ', document.multiselect('#testSelect'+num).getSelectedValues() );
 	}
 </script>
 </body>
