@@ -243,6 +243,8 @@ Multiselect.prototype = {
 	_appendEvents: function () {
 		var self = this;
 		document.getElementById(self._getInputFieldIdentifier()).addEventListener('focus', function (event) {
+			// https://github.com/mneofit/multiselect/issues/10
+			hideMultiselects(event);
 			self._showList(self);
 			document.getElementById(self._getInputFieldIdentifier()).value = '';
 			m_helper.each(window.multiselects, function(e) {
