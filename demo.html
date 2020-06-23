@@ -72,6 +72,14 @@
 	</table>
 
 <script>
+	function getAllValuesOnChange(last) {
+		var values = '';
+		values += 'Multiselect 1: ' + document.multiselect('#testSelect1').getSelectedValues().join(',')+'\n';
+		values += 'Multiselect 2: ' + document.multiselect('#testSelect2').getSelectedValues().join(',')+'\n';
+		values += 'Multiselect 3: ' + document.multiselect('#testSelect3').getSelectedValues().join(',');
+		alert(values);
+	}
+
 	document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
 			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
@@ -81,7 +89,7 @@
 		});
 
 	document.multiselect('#testSelect2');
-	document.multiselect('#testSelect3');
+	document.multiselect('#testSelect3').setOnCloseList(getAllValuesOnChange);
 
 	function enable(num) {
 		document.multiselect('#testSelect'+num).setIsEnabled(true);

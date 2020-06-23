@@ -31,6 +31,8 @@ It provides the following methods:
 | `deselect(value)` | Programmatically deselects the element for option with passed value  |
 | `setIsEnabled(value)` | Accepts the boolean value indicating whether multiselect is enabled or not |
 | `setCheckBoxClick(value, handler)` | Sets the click listener for checkbox with particular value, where `value=='checkboxAll'` stands for 'Select All' checkbox. Handler accepts two arguments - target and args. See examples below |
+| `setMultiselectOnCloseList(handler)` | Sets the close list listener. An array with the selected values are returned to Handler. |
+| `getSelectedValues` | Gets selected values as array. |
 | `destroy()` | Removes the element and returns to original `select[multiple]`. Allows to recreate item again. |
 #### Examples
 Programmatically selecting and deselecting items:
@@ -48,6 +50,10 @@ $(selector).multiselect().setCheckBoxClick("checkboxAll", function(target, args)
 $(selector).multiselect().setCheckBoxClick("1", function(target, args) {
     console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
 });
+$(selector).multiselect().setOnCloseList(function(values) {
+    console.log("Selected values are: ', values.join(','));
+});
+console.log('Selected values are: ', $(selector).getSelectedValues() );
 $(selector).multiselect().destroy();
 // without jQuery
 document.multiselect(selector).selectAll();
@@ -62,6 +68,10 @@ document.multiselect(selector).setCheckBoxClick("checkboxAll", function(target, 
 document.multiselect(selector).setCheckBoxClick("1", function(target, args) {
     console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
 });
+document.multiselect(selector).setOnCloseList(function(values) {
+    console.log("Selected values are: ', values.join(','));
+});
+console.log('Selected values are: ', document.multiselect(selector).getSelectedValues() );
 document.multiselect(selector).destroy();
 ```
 ### Information on basic capabilities

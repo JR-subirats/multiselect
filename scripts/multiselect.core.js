@@ -239,20 +239,29 @@ Multiselect.prototype = {
 		return this;
 	},
 
+	_onCloseListEvent: null,
+	setOnCloseList(handler) {
+		if (typeof handler === "function") {
+			this._onCloseListEvent = handler;
+		} else {
+			console.error("onCloseList handler is not a function");
+		}
+	},
+
 	//append required events
 	_appendEvents: function () {
 		var self = this;
 		document.getElementById(self._getInputFieldIdentifier()).addEventListener('focus', function (event) {
 			// https://github.com/mneofit/multiselect/issues/10
-			hideMultiselects(event);
+			hideMultiselects(null);
 			self._showList(self);
 			document.getElementById(self._getInputFieldIdentifier()).value = '';
-			m_helper.each(window.multiselects, function(e) {
-				if (document.getElementById(e._getItemListIdentifier()).offsetParent &&
-					m_helper.parent(event.target, e._getIdentifier())) {
-					e._hideList(self);
-				}
-			});
+			// m_helper.each(window.multiselects, function(e) {
+			// 	if (document.getElementById(e._getItemListIdentifier()).offsetParent &&
+			// 		m_helper.parent(event.target, e._getIdentifier())) {
+			// 		e._hideList(self);
+			// 	}
+			// });
 		});
 
 		document.getElementById(self._getInputFieldIdentifier()).addEventListener('click', function () {
@@ -376,13 +385,20 @@ Multiselect.prototype = {
 	},
 
 	_hideList: function (context, event) {
-		m_helper.setUnactive(document.getElementById(context._getItemListIdentifier()));
+		var context_list = document.getElementById(context._getItemListIdentifier());
+		if (m_helper.isActive(context_list)) {
+			m_helper.setUnactive(context_list);
 
-		m_helper.show(document.getElementById(context._getItemListIdentifier()).querySelector('span'));
-		m_helper.show(document.getElementById(context._getItemListIdentifier()).querySelector('hr'));
-		m_helper.showAll(document.getElementById(context._getItemListIdentifier()).querySelectorAll('li'));
+			m_helper.show(context_list.querySelector('span'));
+			m_helper.show(context_list.querySelector('hr'));
+			m_helper.showAll(context_list.querySelectorAll('li'));
 
-		context._updateText(context);
+			context._updateText(context);
+
+			if (context._onCloseListEvent) {
+				context._onCloseListEvent(context.getSelectedValues());
+			}
+		}
 
 		if (event)
 			event.stopPropagation();
